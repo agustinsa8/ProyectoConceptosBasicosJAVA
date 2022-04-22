@@ -22,7 +22,7 @@ public class Producto {
     }
     
     public void listarProductos(){
-    	System.out.println("\nFecha de creacion del producto: " + this.fecha);
+    	System.out.println("Fecha de creacion del producto: " + this.fecha);
         System.out.println("Tipo de producto: " + this.tipo);
         System.out.println("Nombre del producto: " + this.nombre);
         System.out.println("Autor del producto: " + this.autor);

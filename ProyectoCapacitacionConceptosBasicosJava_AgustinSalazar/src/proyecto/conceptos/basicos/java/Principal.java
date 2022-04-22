@@ -34,6 +34,7 @@ public class Principal {
 	
 	public static void listar() {
 		for(int c=0; c<lst.size(); c++) {
+			System.out.println("\n--------------------------------------------------------------------");
             System.out.println("Codigo: "+c);
             lst.get(c).listarProductos();
         }

@@ -1,9 +1,12 @@
 package interfaces.aplicacion;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import conexion.persistencia.ProductoDao;
 import proyecto.conceptos.basicos.java.Articulo;
 import proyecto.conceptos.basicos.java.Libro;
 import proyecto.conceptos.basicos.java.Producto;
@@ -11,9 +14,11 @@ import proyecto.conceptos.basicos.java.Revista;
 
 public class ServiciosImpl implements IServicios {
 	
-	public void agregarProducto(List<Producto>lst) {
+	public void agregarProducto(){
+		ProductoDao producto = new ProductoDao();
         System.out.println("\nEscoja el tipo de producto que desea agregar: \n" + "\n1.Libro -- " + "2.Revista -- " + "3.Articulo\n" + "\nDigite una opcion: ");
-        Date fecha = new Date();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String fecha = dtf.format(LocalDateTime.now());
         Scanner opcion = new Scanner(System.in);
         int tipoProducto = opcion.nextInt();
         if((tipoProducto>=1) && (tipoProducto<=3)){
@@ -30,35 +35,43 @@ public class ServiciosImpl implements IServicios {
             Scanner in4= new Scanner(System.in);
             float precio = in4.nextFloat();
             if(tipoProducto==1){
-                Libro lib = new Libro(fecha.toString(), nombre, autor, editorial, precio, 0);
-                lst.add(lib);
+            	Libro lib = new Libro(0, fecha, nombre, autor, editorial, precio, 0);
+                producto.insertarLibro(lib);
             }
             else if (tipoProducto==2){                
-                Revista rev = new Revista(fecha.toString(), nombre, autor, editorial, precio, 0);
-                lst.add(rev);
+                Revista rev = new Revista(0, fecha, nombre, autor, editorial, precio, 0);
+                producto.insertarRevista(rev);
                 }
             else if(tipoProducto==3){
-                Articulo art= new Articulo(fecha.toString(), nombre, autor, editorial, precio, 0);
-                lst.add(art);
+                Articulo art= new Articulo(0, fecha, nombre, autor, editorial, precio, 0);
+                producto.insertarArticulo(art);
                     }
-            System.out.println("***Producto agregado correctamente***");
+            System.out.println("\n-------------------------------------------------------");
+            System.out.println("*Producto agregado correctamente*");
+            System.out.println("--------------------------------------------------------\n");
                 }
         else{
             System.out.println("¡¡El dato ingresado no es una opcion valida, vuelva a intentarlo!!");
         }
 	}
 	
-	public void inventario(List<Producto>lst) {
+	public void inventario() {
+		ProductoDao producto = new ProductoDao();
+		Producto prod = new Producto();
 		System.out.println("Ingrese el codigo del producto al que quiere agregar inventario: ");
         Scanner in1 = new Scanner(System.in);
         try {
         	int codigo= in1.nextInt();
-        	if(lst.get(codigo)!=null){
+        	prod = producto.buscarProducto(codigo);
+        	if(prod!=null){
                 System.out.println("Digite la cantidad:");
                 Scanner in2 = new Scanner(System.in);
                 int cantidad= in2.nextInt();
-                lst.get(codigo).setCantidad(cantidad+lst.get(codigo).getCantidad());
-                System.out.println("Cantidad modificada correctamente");
+                prod.setCantidad(prod.getCantidad()+cantidad);
+                producto.actualizarCantidadProducto(prod);
+                System.out.println("\n-------------------------------------------------------");
+                System.out.println("*Cantidad modificada correctamente*");
+                System.out.println("--------------------------------------------------------\n");
             }
             else{
                 System.out.println("¡¡El codigo ingresado es incorrecto!!");
@@ -66,27 +79,30 @@ public class ServiciosImpl implements IServicios {
         }
         catch (Exception e) {
         	System.out.println("**ERROR**" + e.getMessage());
-		}
-        
-		
+		}	
 	}
 	
-	public void venta(List<Producto>lst) {
+	public void venta() {
+		ProductoDao producto = new ProductoDao();
+		Producto prod = new Producto();
 		System.out.println("Ingrese el codigo del producto a vender: ");
         Scanner in1 = new Scanner(System.in);
         try {
         int codigo= in1.nextInt();
-        if(lst.get(codigo)!=null){
-            System.out.println("\nNombre del producto: " + lst.get(codigo).getNombre());
-            System.out.println("Precio del producto: $" + lst.get(codigo).getPrecio());
-            System.out.println("Cantidad disponible del producto: " + lst.get(codigo).getCantidad());
-            if(lst.get(codigo).getCantidad()!=0){
+        prod = producto.buscarProducto(codigo);
+        if(prod!=null){
+        	prod.listarProductos();
+            if(prod.getCantidad()!=0){
                 System.out.println("\nDigite la cantidad a vender: ");
                 Scanner in2= new Scanner(System.in);
                 int cantComprar= in2.nextInt();
-                if(cantComprar <= lst.get(codigo).getCantidad()){
-                	lst.get(codigo).setCantidad(lst.get(codigo).getCantidad()-cantComprar);
-                    System.out.println("\nValor total a pagar: $"+((lst.get(codigo).getPrecio())*cantComprar));
+                if(cantComprar <= prod.getCantidad()){
+                	prod.setCantidad(prod.getCantidad()-cantComprar);
+                	producto.actualizarCantidadProducto(prod);
+                    System.out.println("\nValor total a pagar: $"+((prod.getPrecio())*cantComprar));
+                    System.out.println("\n-------------------------------------------------------");
+                    System.out.println("*Compra realizada con exito*");
+                    System.out.println("-------------------------------------------------------\n");
                 }
                 else{
                     System.out.println("La cantidad excede la disponibilidad del producto");

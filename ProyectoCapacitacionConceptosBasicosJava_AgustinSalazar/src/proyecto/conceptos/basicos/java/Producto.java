@@ -1,6 +1,7 @@
 package proyecto.conceptos.basicos.java;
 
 public class Producto {
+	private int id;
 	private String fecha;
     private String tipo;
     private String nombre;
@@ -9,9 +10,13 @@ public class Producto {
     private float precio;
     private int cantidad;
     
-
-    public Producto(String fecha, String tipo, String nombre, String autor, String editorial, float precio, int cantidad) {
+    public Producto() {
+    	
+    }
+    
+    public Producto(int id, String fecha, String tipo, String nombre, String autor, String editorial, float precio, int cantidad) {
     	super();
+    	this.id = id;
     	this.fecha = fecha;
         this.tipo = tipo;
         this.nombre = nombre;
@@ -22,16 +27,25 @@ public class Producto {
     }
     
     public void listarProductos(){
-    	System.out.println("\nFecha de creacion del producto: " + this.fecha);
+    	System.out.println("\n-----------------------------------------------------------");
+    	System.out.println("Codigo del producto: " + this.id);
         System.out.println("Tipo de producto: " + this.tipo);
         System.out.println("Nombre del producto: " + this.nombre);
         System.out.println("Autor del producto: " + this.autor);
         System.out.println("Editorial del producto: " + this.editorial);
         System.out.println("Precio del producto: " + this.precio);
-        System.out.println("Cantidad disponible del producto: " + this.cantidad+"\n");
+        System.out.println("Cantidad disponible del producto: " + this.cantidad);
     }
     
-    public String getFecha() {
+    public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFecha() {
 		return fecha.toString();
 	}
 
